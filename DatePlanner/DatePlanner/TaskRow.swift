@@ -1,13 +1,6 @@
 
 
 import SwiftUI
-#if DEBUG
-import OSLog
-#endif
-
-#if DEBUG
-private let taskRowLog = Logger(subsystem: "com.damonwork.DatePlanner", category: "TaskRow")
-#endif
 
 struct TaskRow: View {
     @Binding var task: EventTask
@@ -88,9 +81,6 @@ struct TaskRow: View {
                         .focused($isFocused)
                         .onChange(of: isFocused) { newVal in
                             if !newVal {
-                                #if DEBUG
-                                taskRowLog.debug("focus lost task id=\(task.id.uuidString, privacy: .public) isNew=\(task.isNew)")
-                                #endif
                                 onFinishNewTask?()
                             }
                         }
@@ -133,9 +123,6 @@ struct TaskRow: View {
         .clipped()
         .onAppear {
             if task.isNew {
-                #if DEBUG
-                taskRowLog.debug("autofocus new task id=\(task.id.uuidString, privacy: .public)")
-                #endif
                 isFocused = true
             }
         }
@@ -147,9 +134,6 @@ struct TaskRow: View {
 // cuando la tarea se acaba de crear y todavía no se ha confirmado/guardado en el store.
 
     private func triggerDelete() {
-        #if DEBUG
-        taskRowLog.debug("trigger delete task id=\(task.id.uuidString, privacy: .public)")
-        #endif
         withAnimation(.easeIn(duration: 0.18)) {
             offset = -400
             onDelete?()

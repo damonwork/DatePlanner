@@ -1,12 +1,5 @@
 
 import SwiftUI
-#if DEBUG
-import OSLog
-#endif
-
-#if DEBUG
-private let eventDetailLog = Logger(subsystem: "com.damonwork.DatePlanner", category: "EventDetail")
-#endif
 
 struct EventDetail: View {
     @Binding var event: Event
@@ -192,22 +185,13 @@ struct EventDetail: View {
     }
 
     private func removeTask(withID id: EventTask.ID) {
-        #if DEBUG
-        let beforeCount = event.tasks.count
-        #endif
         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
             event.tasks.removeAll { $0.id == id }
         }
-        #if DEBUG
-        eventDetailLog.debug("remove task id=\(id.uuidString, privacy: .public) before=\(beforeCount) after=\(self.event.tasks.count)")
-        #endif
     }
 
     private func binding(for taskID: EventTask.ID) -> Binding<EventTask>? {
         guard let snapshot = event.tasks.first(where: { $0.id == taskID }) else {
-            #if DEBUG
-            eventDetailLog.error("task binding missing id=\(taskID.uuidString, privacy: .public)")
-            #endif
             return nil
         }
 
@@ -217,10 +201,6 @@ struct EventDetail: View {
             },
             set: { updatedTask in
                 guard let index = event.tasks.firstIndex(where: { $0.id == taskID }) else {
-                    #if DEBUG
-                    eventDetailLog.error("task binding set missing id=\(taskID.uuidString, privacy: .public)")
-                    assertionFailure("Task binding set failed: missing task id")
-                    #endif
                     return
                 }
                 event.tasks[index] = updatedTask
@@ -229,21 +209,12 @@ struct EventDetail: View {
     }
 
     private func markTaskAsNotNew(withID id: EventTask.ID) {
-        #if DEBUG
-        let exists = event.tasks.contains { $0.id == id }
-        if !exists {
-            eventDetailLog.warning("markTaskAsNotNew missing id=\(id.uuidString, privacy: .public)")
-        }
-        #endif
         event.tasks = event.tasks.map { currentTask in
             guard currentTask.id == id else { return currentTask }
             var updatedTask = currentTask
             updatedTask.isNew = false
             return updatedTask
         }
-        #if DEBUG
-        eventDetailLog.debug("mark task not-new id=\(id.uuidString, privacy: .public)")
-        #endif
     }
 }
 

@@ -1,13 +1,6 @@
 
 
 import SwiftUI
-#if DEBUG
-import OSLog
-#endif
-
-#if DEBUG
-private let eventDataLog = Logger(subsystem: "com.damonwork.DatePlanner", category: "EventData")
-#endif
 
 class EventData: ObservableObject {
     @Published var events: [Event] = [
@@ -93,20 +86,11 @@ class EventData: ObservableObject {
     ]
 
     func delete(_ event: Event) {
-        #if DEBUG
-        let beforeCount = events.count
-        #endif
         events.removeAll { $0.id == event.id }
-        #if DEBUG
-        eventDataLog.debug("delete event id=\(event.id.uuidString, privacy: .public) before=\(beforeCount) after=\(self.events.count)")
-        #endif
     }
     
     func add(_ event: Event) {
         events.append(event)
-        #if DEBUG
-        eventDataLog.debug("add event id=\(event.id.uuidString, privacy: .public) total=\(self.events.count)")
-        #endif
     }
     
     func exists(_ event: Event) -> Bool {
@@ -132,9 +116,6 @@ class EventData: ObservableObject {
 
     func binding(for eventID: Event.ID) -> Binding<Event>? {
         guard let snapshot = events.first(where: { $0.id == eventID }) else {
-            #if DEBUG
-            eventDataLog.error("binding missing id=\(eventID.uuidString, privacy: .public)")
-            #endif
             return nil
         }
 
@@ -144,10 +125,6 @@ class EventData: ObservableObject {
             },
             set: { [self] updatedEvent in
                 guard let index = events.firstIndex(where: { $0.id == eventID }) else {
-                    #if DEBUG
-                    eventDataLog.error("binding set missing id=\(eventID.uuidString, privacy: .public)")
-                    assertionFailure("Event binding set failed: missing event id")
-                    #endif
                     return
                 }
                 events[index] = updatedEvent
