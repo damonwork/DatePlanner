@@ -97,29 +97,35 @@ class EventData: ObservableObject {
         events.contains(event)
     }
     
-    func sortedEvents(period: Period) -> Binding<[Event]> {
-        Binding<[Event]>(
-            get: {
-                self.events
-                    .filter {
-                        switch period {
-                        case .nextSevenDays:
-                            return $0.isWithinSevenDays
-                        case .nextThirtyDays:
-                            return $0.isWithinSevenToThirtyDays
-                        case .future:
-                            return $0.isDistant
-                        case .past:
-                            return $0.isPast
-                        }
-                    }
-                    .sorted { $0.date < $1.date }
-            },
-            set: { events in
-                let updatesByID = Dictionary(uniqueKeysWithValues: events.map { ($0.id, $0) })
-                self.events = self.events.map { currentEvent in
-                    updatesByID[currentEvent.id] ?? currentEvent
+    func sortedEvents(period: Period) -> [Event] {
+        events
+            .filter {
+                switch period {
+                case .nextSevenDays:
+                    return $0.isWithinSevenDays
+                case .nextThirtyDays:
+                    return $0.isWithinSevenToThirtyDays
+                case .future:
+                    return $0.isDistant
+                case .past:
+                    return $0.isPast
                 }
+            }
+            .sorted { $0.date < $1.date }
+    }
+
+    func binding(for eventID: Event.ID) -> Binding<Event>? {
+        guard let snapshot = events.first(where: { $0.id == eventID }) else {
+            return nil
+        }
+
+        return Binding<Event>(
+            get: { [self] in
+                events.first(where: { $0.id == eventID }) ?? snapshot
+            },
+            set: { [self] updatedEvent in
+                guard let index = events.firstIndex(where: { $0.id == eventID }) else { return }
+                events[index] = updatedEvent
             }
         )
     }

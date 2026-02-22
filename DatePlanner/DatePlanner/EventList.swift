@@ -47,7 +47,7 @@ struct EventList: View {
                     // Secciones
                     ForEach(Period.allCases) { period in
                         let events = eventData.sortedEvents(period: period)
-                        if !events.wrappedValue.isEmpty {
+                        if !events.isEmpty {
                             PeriodSection(period: period, events: events)
                         }
                     }
@@ -66,7 +66,7 @@ struct EventList: View {
 
 struct PeriodSection: View {
     let period: Period
-    var events: Binding<[Event]>
+    let events: [Event]
     @EnvironmentObject var eventData: EventData
 
     var periodColor: Color {
@@ -107,19 +107,21 @@ struct PeriodSection: View {
 
             // Event cards
             VStack(spacing: 2) {
-                ForEach(events) { $event in
-                    NavigationLink {
-                        EventEditor(event: $event)
-                            .navigationBarBackButtonHidden(false)
-                    } label: {
-                        EventRow(event: event)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .contextMenu {
-                        Button(role: .destructive) {
-                            eventData.delete(event)
+                ForEach(events) { event in
+                    if let eventBinding = eventData.binding(for: event.id) {
+                        NavigationLink {
+                            EventEditor(event: eventBinding)
+                                .navigationBarBackButtonHidden(false)
                         } label: {
-                            Label("Delete Event", systemImage: "trash")
+                            EventRow(event: event)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                eventData.delete(event)
+                            } label: {
+                                Label("Delete Event", systemImage: "trash")
+                            }
                         }
                     }
                 }
