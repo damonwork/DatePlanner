@@ -119,7 +119,7 @@ struct TaskRow: View {
             )
         }
         .clipped()
-        .task {
+        .onAppear {
             if task.isNew { isFocused = true }
         }
     }

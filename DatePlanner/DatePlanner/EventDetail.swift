@@ -127,7 +127,7 @@ struct EventDetail: View {
                                     }
                                 )
 
-                                if task.id != event.tasks.last?.id {
+                                if taskID != event.tasks.last?.id {
                                     Divider()
                                         .background(Color.white.opacity(0.08))
                                         .padding(.leading, 58)
