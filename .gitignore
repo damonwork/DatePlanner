@@ -1,0 +1,115 @@
+# Xcode
+#
+# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+
+## User settings
+xcuserdata/
+
+## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
+*.xcscmblueprint
+*.xccheckout
+
+## compatibility with Xcode 3 and earlier (ignoring not required starting Xcode 4)
+build/
+DerivedData/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+## Obj-C/Swift specific
+*.hmap
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+#
+# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
+# Packages/
+# Package.pins
+# Package.resolved
+# *.xcodeproj
+#
+# Uncomment the next line if you prefer unrelated workspaces to have their own Package.resolved.
+# .build/
+
+.build/
+
+# CocoaPods
+#
+# We recommend against adding the Pods directory to your .gitignore file,
+# but if you do, then add "!Pods/Debug" and "!Pods/Release" (or the ones you use) to the allow list.
+#
+# Pods/
+#
+# Add this line if you want to avoid checking in source code from the CocoaPods tool.
+# For example, the CocoaPods tool, or CocoaPods itself.
+#
+# vendor/bundle
+
+# Carthage
+#
+# Add this line if you want to avoid checking in source code from Carthage dependencies.
+# Carthage/Checkouts
+
+Carthage/Build/
+
+# accido (a simple placeholder to make the Podfile.lock overrides section work for CocoaPods)
+# https://github.com/nicklockwood/SwiftFormat
+
+# Accio dependency management
+Dependencies/
+.accio/
+
+# fastlane
+#
+# It is recommended to not store the fastlane credentials in the git repo.
+# For more information, check out the fastlane documentation
+#     https://docs.fastlane.tools
+#
+# However, you may choose to store the Fastfile and other configuration
+# If you do, uncomment the following lines:
+# fastlane/report.xml
+# fastlane/DeploymentDetails.plist
+# fastlane/screenshots/**/*.png
+# fastlane/test_output
+
+# Code Injection
+#
+# After new code Injection tools there's a new directory with a plugin content added.
+# Uncomment this line if you're using one of these:
+# iOSInjectionProject/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# __MACOSX metadata folders
+__MACOSX/
