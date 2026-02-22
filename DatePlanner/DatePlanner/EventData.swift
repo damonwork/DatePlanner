@@ -116,10 +116,9 @@ class EventData: ObservableObject {
                     .sorted { $0.date < $1.date }
             },
             set: { events in
-                for event in events {
-                    if let index = self.events.firstIndex(where: { $0.id == event.id }) {
-                        self.events[index] = event
-                    }
+                let updatesByID = Dictionary(uniqueKeysWithValues: events.map { ($0.id, $0) })
+                self.events = self.events.map { currentEvent in
+                    updatesByID[currentEvent.id] ?? currentEvent
                 }
             }
         )

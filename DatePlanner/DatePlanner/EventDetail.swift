@@ -120,9 +120,10 @@ struct EventDetail: View {
                                     task: $task,
                                     isEditing: isEditing,
                                     onDelete: {
-                                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                                            event.tasks.removeAll { $0.id == taskID }
-                                        }
+                                        removeTask(withID: taskID)
+                                    },
+                                    onFinishNewTask: {
+                                        markTaskAsNotNew(withID: taskID)
                                     }
                                 )
 
@@ -178,6 +179,21 @@ struct EventDetail: View {
         #endif
         .sheet(isPresented: $isPickingSymbol) {
             SymbolPicker(event: $event)
+        }
+    }
+
+    private func removeTask(withID id: EventTask.ID) {
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+            event.tasks.removeAll { $0.id == id }
+        }
+    }
+
+    private func markTaskAsNotNew(withID id: EventTask.ID) {
+        event.tasks = event.tasks.map { currentTask in
+            guard currentTask.id == id else { return currentTask }
+            var updatedTask = currentTask
+            updatedTask.isNew = false
+            return updatedTask
         }
     }
 }

@@ -6,6 +6,7 @@ struct TaskRow: View {
     @Binding var task: EventTask
     var isEditing: Bool
     var onDelete: (() -> Void)? = nil
+    var onFinishNewTask: (() -> Void)? = nil
 
     @FocusState private var isFocused: Bool
 
@@ -79,7 +80,7 @@ struct TaskRow: View {
                         .foregroundColor(.white)
                         .focused($isFocused)
                         .onChange(of: isFocused) { newVal in
-                            if !newVal { task.isNew = false }
+                            if !newVal { onFinishNewTask?() }
                         }
                 } else {
                     Text(task.text.isEmpty ? "Task" : task.text)
