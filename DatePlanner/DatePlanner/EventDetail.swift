@@ -118,26 +118,28 @@ struct EventDetail: View {
 
                         VStack(spacing: 0) {
 
-                            // Usa $event.tasks para que cada fila tenga un binding estable por ID.
-                            // Captura task.id (un tipo por valor) en el closure — nunca el índice.
+                            // Renderiza desde snapshot por valor y resuelve binding por ID.
+                            // Evita bindings indexados que pueden quedar obsoletos al borrar filas.
 
-                            ForEach($event.tasks) { $task in
+                            ForEach(event.tasks) { task in
                                 let taskID = task.id
-                                TaskRow(
-                                    task: $task,
-                                    isEditing: isEditing,
-                                    onDelete: {
-                                        removeTask(withID: taskID)
-                                    },
-                                    onFinishNewTask: {
-                                        markTaskAsNotNew(withID: taskID)
-                                    }
-                                )
+                                if let taskBinding = binding(for: taskID) {
+                                    TaskRow(
+                                        task: taskBinding,
+                                        isEditing: isEditing,
+                                        onDelete: {
+                                            removeTask(withID: taskID)
+                                        },
+                                        onFinishNewTask: {
+                                            markTaskAsNotNew(withID: taskID)
+                                        }
+                                    )
 
-                                if taskID != event.tasks.last?.id {
-                                    Divider()
-                                        .background(Color.white.opacity(0.08))
-                                        .padding(.leading, 58)
+                                    if taskID != event.tasks.last?.id {
+                                        Divider()
+                                            .background(Color.white.opacity(0.08))
+                                            .padding(.leading, 58)
+                                    }
                                 }
                             }
 
@@ -199,6 +201,31 @@ struct EventDetail: View {
         #if DEBUG
         eventDetailLog.debug("remove task id=\(id.uuidString, privacy: .public) before=\(beforeCount) after=\(self.event.tasks.count)")
         #endif
+    }
+
+    private func binding(for taskID: EventTask.ID) -> Binding<EventTask>? {
+        guard let snapshot = event.tasks.first(where: { $0.id == taskID }) else {
+            #if DEBUG
+            eventDetailLog.error("task binding missing id=\(taskID.uuidString, privacy: .public)")
+            #endif
+            return nil
+        }
+
+        return Binding<EventTask>(
+            get: {
+                event.tasks.first(where: { $0.id == taskID }) ?? snapshot
+            },
+            set: { updatedTask in
+                guard let index = event.tasks.firstIndex(where: { $0.id == taskID }) else {
+                    #if DEBUG
+                    eventDetailLog.error("task binding set missing id=\(taskID.uuidString, privacy: .public)")
+                    assertionFailure("Task binding set failed: missing task id")
+                    #endif
+                    return
+                }
+                event.tasks[index] = updatedTask
+            }
+        )
     }
 
     private func markTaskAsNotNew(withID id: EventTask.ID) {
